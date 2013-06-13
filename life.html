@@ -6,11 +6,12 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="css/life.css" />
 
+
 </head> 
 	
-<body> 
+<body onload="setup()"> 
 
-<table>
+<table id="board">
 	<tr id="1">
 		<td class="dead"></td>
 		<td class="dead"></td>
@@ -197,7 +198,7 @@
 		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
-		<td class="alive"></td>
+		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
@@ -219,7 +220,7 @@
 		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
-		<td class="alive"></td>
+		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
@@ -241,7 +242,7 @@
 		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
-		<td class="alive"></td>
+		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
 		<td class="dead"></td>
@@ -453,6 +454,123 @@
 	</tr>
 
 </table>
+
+<button onclick="gameOfLife()">Step</button>
+
+
+
+<script>
+	/*
+	var table = document.getElementById("mytab1");
+	for (var i = 0, row; row = table.rows[i]; i++) {
+	   //iterate through rows
+	   //rows would be accessed using the "row" variable assigned in the for loop
+	   for (var j = 0, col; col = row.cells[j]; j++) {
+	     //iterate through columns
+	     //columns would be accessed using the "col" variable assigned in the for loop
+	   }  
+	}
+	*/
+
+	var TABLE_SIZE = 20;
+
+	function setup() {
+		var board = blankBoard();
+		for (var i = 0; i < TABLE_SIZE; i++) {
+			for (var j = 0; j < TABLE_SIZE; j++) {
+				board[i][j] = false;
+			}
+		}
+		board[9][9] = true;
+		board[10][9] = true;
+		board[11][9] = true;
+		board[11][10] = true;
+		board[10][11] = true;
+
+		updateTable(document.getElementById("board"), board);
+	}
+
+	function gameOfLife() {
+		
+		
+		var table = document.getElementById("board");
+		var result = blankBoard();
+		for (var r = 0; r < TABLE_SIZE; r++) {
+			for (var c = 0; c < TABLE_SIZE; c++) {
+				checkNeighbors(table, result, r, c);
+			}
+		}
+
+		updateTable(table, result);
+		
+		
+	}
+	
+	
+	function updateTable(table, result) {
+		for (var r = 0, row; row = table.rows[r]; r++) {
+			for (var c = 0, col; col = row.cells[c]; c++) {
+				if (result[r][c] == true) {
+					col.setAttribute("class", "alive");
+				} else {
+					col.setAttribute("class", "dead");
+				}
+			}
+		}
+	}
+	
+
+	function blankBoard() {
+		var board = new Array();
+		board.length = TABLE_SIZE;
+		for (var i = 0; i < TABLE_SIZE; i++) {
+			board[i] = new Array();
+			board[i].length = TABLE_SIZE;
+		}
+
+		return board;
+	}
+
+	function checkNeighbors(table, result, row, col) {
+		var count = 0;
+		for (var i = -1; i <= 1; i++) {
+			for (var j = -1; j <= 1; j++) {
+				if (!(i == 0 && j == 0)) {
+					if (isInBounds(row + i, col + j) == true) {
+						if ((table.rows[row + i].cells[col + j]).className == "alive") {
+							//console.log("cell " + (row + i) + " " + (col + j) + " alive");
+							count++;
+						}
+					}
+				}
+			}
+		}
+
+		if (count == 2) {
+			if ((table.rows[row].cells[col].className) == "alive")
+				result[row][col] = true;
+			else
+				result[row][col] = false;
+		} else if (count == 3) {
+			result[row][col] = true;
+		} else {
+			result[row][col] = false;
+		}
+		/*
+		if (count != 0 ) {
+			console.log("cell " + row + ", " + col + " has " + count + " alive neighbors");
+		}
+		*/
+	}
+
+	function isInBounds(row, col) {
+		if (row < 0 || row >= TABLE_SIZE || col < 0 || col >= TABLE_SIZE) {
+			return false;
+		}
+		return true;
+	}
+	
+	</script>
 
 </body>
 </html>
